@@ -1,0 +1,12 @@
+note over browser:
+user types new note and clicks 'Save' button
+end note
+
+browser -> server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server --> browser: 201 created
+
+note over browser:
+The event handler calls the method e.preventDefault() to prevent the traditional 
+handling of form submit so that the whole page is not reloaded.
+end note
+
