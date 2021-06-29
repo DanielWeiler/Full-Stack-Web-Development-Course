@@ -69,6 +69,29 @@ const App = () => {
     setShowAll(event.target.value)
   }
 
+  const handleRemovePerson = (id) => {
+    const person = persons.find((p) => p.id === id)
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id))
+        })
+        .catch((error) => {
+          console.log("remove person", error)
+          /* setMessageStyle("error")
+          setMessage(
+            `Information of ${person[0].name} has already been removed from the server`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000) */
+          //setPersons(persons.filter((p) => p.id !== id))
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -86,7 +109,11 @@ const App = () => {
       <h2>Numbers</h2>
       <ul>
         {personsToShow.map((person) => (
-          <Person key={person.name} person={person} />
+          <Person
+            key={person.name}
+            person={person}
+            handleRemovePerson={handleRemovePerson}
+          />
         ))}
       </ul>
     </div>
