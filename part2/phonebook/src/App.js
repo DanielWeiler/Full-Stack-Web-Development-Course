@@ -28,12 +28,29 @@ const App = () => {
       number: newNumber,
     }
 
-    if (
-      persons.find(
-        (person) => person.name.toLowerCase() === newName.toLowerCase()
-      )
-    ) {
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    )
+
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const id = existingPerson.id
+        const updatedPerson = { ...existingPerson, number: newNumber }
+        personService
+          .update(id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(persons.map((p) => (p.id !== id ? p : returnedPerson)))
+            setNewName("")
+            setNewNumber("")
+          })
+          .catch((error) => {
+            console.log("Update failed", error)
+          })
+      }
     } else {
       personService
         .create(personObject)
@@ -41,11 +58,6 @@ const App = () => {
           setPersons(persons.concat(newPerson))
           setNewName("")
           setNewNumber("")
-          /* setMessageStyle("success")
-          setMessage(`Added ${newName} to the phonebook`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 3000) */
         })
         .catch((error) => {
           console.log("addName", error)
@@ -80,14 +92,6 @@ const App = () => {
         })
         .catch((error) => {
           console.log("remove person", error)
-          /* setMessageStyle("error")
-          setMessage(
-            `Information of ${person[0].name} has already been removed from the server`
-          )
-          setTimeout(() => {
-            setMessage(null)
-          }, 3000) */
-          //setPersons(persons.filter((p) => p.id !== id))
         })
     }
   }
