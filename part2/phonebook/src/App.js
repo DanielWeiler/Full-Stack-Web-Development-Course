@@ -51,7 +51,12 @@ const App = () => {
             setNewNumber("")
           })
           .catch((error) => {
-            console.log("Update failed", error)
+            console.log(error.response.data)
+            setMessageStyle("error")
+            setMessage(error.response.data.error)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
           })
       }
     } else {
@@ -68,7 +73,12 @@ const App = () => {
           }, 5000)
         })
         .catch((error) => {
-          console.log("addName", error)
+          console.log(error.response.data)
+          setMessageStyle("error")
+          setMessage(error.response.data.error)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
     }
   }
