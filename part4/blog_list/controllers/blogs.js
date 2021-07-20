@@ -3,17 +3,21 @@ const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
-  response.json(blogs.map(blog => blog.toJSON()))  
+  response.json(blogs.map((blog) => blog.toJSON()))
 })
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  
+  if (body.title === '' || body.url === '') {
+    return response.status(403).json({ error: 'Title and url are required' })
+  }
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes ? body.likes : 0,
+    // If likes is defined, then it is likes; if likes is not defined then it is 0.
   })
 
   const savedBlog = await blog.save()
@@ -34,4 +38,29 @@ blogsRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
-module.exports = blogsRouter 
+blogsRouter.put('/:id', async (request, response) => {
+  const body = request.body
+  const blog = await Blog.findById(request.params.id)
+  if (blog) {
+    if (body.title === '' || body.url === '') {
+      return response.status(403).json({ error: 'Title and url are required' })
+    }
+    
+    const updatedBlogData = {
+      title: body.title || blog.title,
+      author: body.author || blog.author,
+      url: body.url || blog.url,
+      likes: body.likes || blog.likes,
+    }
+
+    const blogUpdate = await Blog.findByIdAndUpdate(
+      request.params.id,
+      updatedBlogData,
+      { new: true }
+    )
+
+    return response.json(blogUpdate.toJSON())
+  }
+})
+
+module.exports = blogsRouter
