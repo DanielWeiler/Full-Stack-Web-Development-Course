@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYwZjZkMWU5ZjhhZTkwNGE0ODFhNjcyZCIsImlhdCI6MTYyNjg2NzUzOCwiZXhwIjoxNjI2ODcxMTM4fQ.x7Qu8MgmcQLX6HWlHszlnzWI2hCOvDUcyxFO-krKCfY
 
 {
-    "title": "",
+    "title": "real great",
     "author": "daniel",
-    "url": "xblog",
+    "url": "1blog",
     "likes": 7,
     "userId": "60f6d1e9f8ae904a481a672d"
 }
