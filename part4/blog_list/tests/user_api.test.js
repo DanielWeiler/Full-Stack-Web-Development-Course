@@ -61,6 +61,36 @@ describe('when there is initially one user in db', () => {
   })
 })
 
+describe('adding a new user', () => {
+  test('adding user fails when required data is missing', async () => {
+    const newUser = {
+      username: '',
+      name: 'daniel',
+      password: ''
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('{"error":"Password must be at least 3 characters long"}')
+  })
+
+  test('adding user fails when data is invalid', async () => {
+    const newUser = {
+      username: 'xx',
+      name: 'daniel',
+      password: 'xx'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('{"error":"Password must be at least 3 characters long"}')
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

@@ -2,9 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "another test",
+    "title": "",
     "author": "daniel",
-    "url": "yblog",
+    "url": "xblog",
     "likes": 7,
     "userId": "60f6d1e9f8ae904a481a672d"
 }
@@ -13,7 +13,7 @@ Content-Type: application/json
 GET http://localhost:3003/api/blogs
 
 ###
-DELETE http://localhost:3003/api/blogs/60f6be03f0d3f04f386c5ca1
+DELETE http://localhost:3003/api/blogs/60f6bfafb2fc3e4a9cc9ab59
 
 ###
 PUT http://localhost:3003/api/blogs/60e81d61982aea34884d7d3a
