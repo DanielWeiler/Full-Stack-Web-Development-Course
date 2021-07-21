@@ -3,19 +3,29 @@ const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let userToken
 
 // The database for testing is initialized 
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
+  
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', passwordHash })
+  await user.save()
+  userToken = jwt.sign({ username: user.username, id: user._id }, process.env.SECRET)
 
-  await Blog.insertMany(helper.initialBlogs)
-/* previous method:
   for (let blog of helper.initialBlogs) {
+    blog.user = user._id
     let blogObject = new Blog(blog)
     await blogObject.save()
-  } */
+  }
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -58,6 +68,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${userToken}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -80,6 +91,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${userToken}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -98,6 +110,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${userToken}`)
       .send(newBlog)
       .expect(400)
     
@@ -114,8 +127,25 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${userToken}`)
       .send(newBlog)
       .expect(400)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('fails if a token is not provided', async () => {
+    const newBlog = {
+      title: 'no token',
+      author: 'daniel',
+      likes: 86
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
     
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
@@ -123,12 +153,13 @@ describe('addition of a new blog', () => {
 })
 
 describe('deletion of a blog', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
+  test('succeeds with status code 204 if id is valid and user is authorized', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${userToken}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -142,25 +173,6 @@ describe('deletion of a blog', () => {
     expect(contents).not.toContain(blogToDelete.title)
   })
 })
-
-/* describe('updating the info of a blog', () => {
-  test('update amount of likes of a blog', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToUpdate = blogsAtStart[0]
-
-    const blogUpdate = {
-      likes: 88
-    }
-
-    await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send(blogUpdate)
-      .expect(200)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect((blogsAtEnd[0]).likes).toBe(88)
-  })
-}) */
 
 afterAll(() => {
   mongoose.connection.close()
