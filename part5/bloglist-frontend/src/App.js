@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   //const [newBlog, setNewBlog] = useState('')
   //const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [messageStyle, setMessageStyle] = useState(null)
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -41,9 +44,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessageStyle('error')
+      setMessage('wrong username or password')
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     }
   }
@@ -81,6 +85,13 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
+      setMessageStyle('success')
+      setMessage(
+        `a new blog ${blogObject.title} by ${blogObject.author} added`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     })
   }
 
@@ -89,11 +100,14 @@ const App = () => {
       {user === null ? (
         <div>
           <h2>Log in to application</h2>
+          <Notification message={message} messageStyle={messageStyle} />
           {loginForm()}
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
+
+          <Notification message={message} messageStyle={messageStyle} />
 
           <p>
             {user.name} logged in
