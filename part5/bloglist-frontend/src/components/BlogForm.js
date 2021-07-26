@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-//did it say to do this later so I'm not copying N?
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -13,13 +12,13 @@ const BlogForm = ({ createBlog }) => {
       author: author,
       url: url,
     })
-    setAuthor('')
     setTitle('')
+    setAuthor('')
     setUrl('')
   }
 
   return (
-    <div className="formDiv">
+    <div>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
