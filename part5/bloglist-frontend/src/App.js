@@ -11,7 +11,6 @@ import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //const [showAll, setShowAll] = useState(true)
   const [messageStyle, setMessageStyle] = useState(null)
   const [message, setMessage] = useState(null)
 
@@ -25,6 +24,10 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
+
+  useEffect(() => {
+    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+  }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -81,9 +84,7 @@ const App = () => {
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
       setMessageStyle('success')
-      setMessage(
-        `a new blog ${blogObject.title} by ${blogObject.author} added`
-      )
+      setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -96,13 +97,33 @@ const App = () => {
     </Togglable>
   )
 
+  const handleLike = (id, blogObject) => {
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+  }
+
+  const deleteBlog = (blog) => {
+    if (window.confirm(`Remove blog '${blog.title}' by ${blog.author}?`)){
+      blogService
+        .remove(blog.id)
+        .then(response => {
+          console.log(response)
+          setBlogs(blogs.filter((b) => b.id !== blog.id))
+        })
+    } else { return }
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
       <Notification message={message} messageStyle={messageStyle} />
 
-      {user === null ?
-        loginForm() : 
+      {user === null ? (
+        loginForm()
+      ) : (
         <div>
           <p>
             {user.name} logged in
@@ -112,10 +133,16 @@ const App = () => {
           {blogForm()}
 
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user.username}
+              updateBlog={handleLike}
+              removeBlog={deleteBlog}
+            />
           ))}
         </div>
-      }
+      )}
     </div>
   )
 }
