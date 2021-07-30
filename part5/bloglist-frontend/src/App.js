@@ -26,10 +26,6 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-  }, [blogs])
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -37,6 +33,10 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  useEffect(() => {
+    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+  }, [blogs])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -67,18 +67,6 @@ const App = () => {
     setUser(null)
   }
 
-  const loginForm = () => (
-    <Togglable buttonLabel="log in">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
-    </Togglable>
-  )
-
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
@@ -91,29 +79,21 @@ const App = () => {
     })
   }
 
-  const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
-    </Togglable>
-  )
-
   const handleLike = (id, blogObject) => {
-    blogService
-      .update(id, blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
-      })
+    blogService.update(id, blogObject).then((returnedBlog) => {
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+    })
   }
 
   const deleteBlog = (blog) => {
-    if (window.confirm(`Remove blog '${blog.title}' by ${blog.author}?`)){
-      blogService
-        .remove(blog.id)
-        .then(response => {
-          console.log(response)
-          setBlogs(blogs.filter((b) => b.id !== blog.id))
-        })
-    } else { return }
+    if (window.confirm(`Remove blog '${blog.title}' by ${blog.author}?`)) {
+      blogService.remove(blog.id).then((response) => {
+        console.log(response)
+        setBlogs(blogs.filter((b) => b.id !== blog.id))
+      })
+    } else {
+      return
+    }
   }
 
   return (
@@ -122,7 +102,13 @@ const App = () => {
       <Notification message={message} messageStyle={messageStyle} />
 
       {user === null ? (
-        loginForm()
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
       ) : (
         <div>
           <p>
@@ -130,7 +116,9 @@ const App = () => {
             <button onClick={handleLogout}>log out</button>
           </p>
 
-          {blogForm()}
+          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
 
           {blogs.map((blog) => (
             <Blog
