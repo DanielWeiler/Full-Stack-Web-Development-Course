@@ -33,8 +33,6 @@ const reducer = (state = initialState, action) => {
       return state.map(anecdote => 
         anecdote.id !== id ? anecdote : votedAnecdote)
 
-        //setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-
     case 'NEW_ANECDOTE':
       return [...state, action.data]
     
