@@ -1,0 +1,23 @@
+import React from 'react'
+import { connect } from 'react-redux'
+import { filterData } from '../reducers/filterReducer'
+
+const Filter = (props) => {
+  const handleChange = (event) => {
+    const filteredAnecdotes = event.target.value
+    props.filterData(filteredAnecdotes)
+  }
+
+  const style = {
+    marginBottom: 10,
+  }
+
+  return (
+    <div style={style}>
+      filter <input onChange={handleChange} />
+    </div>
+  )
+}
+
+const ConnectedFilter = connect(null, { filterData })(Filter)
+export default ConnectedFilter
