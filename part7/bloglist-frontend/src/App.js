@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch /* , useSelector */ } from 'react-redux'
+import {
+  setNotification,
+  clearNotification,
+} from './reducers/notificationReducer'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -10,9 +15,9 @@ import loginService from './services/login'
 import './index.css'
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [blogs, setBlogs] = useState([])
-  const [messageStyle, setMessageStyle] = useState(null)
-  const [message, setMessage] = useState(null)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -49,11 +54,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessageStyle('error')
-      setMessage('wrong username or password')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setNotification('wrong username or password', 'error', 5))
     }
   }
 
@@ -67,11 +68,14 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
-      setMessageStyle('success')
-      setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(clearNotification())
+      dispatch(
+        setNotification(
+          `a new blog ${blogObject.title} by ${blogObject.author} added`,
+          'success',
+          5
+        )
+      )
     })
   }
 
@@ -97,7 +101,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={message} messageStyle={messageStyle} />
+      <Notification />
 
       {user === null ? (
         <LoginForm
