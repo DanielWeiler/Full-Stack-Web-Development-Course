@@ -1,20 +1,48 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import { useField } from '../hooks'
+import { createBlog } from '../reducers/blogReducer'
+import {
+  setNotification,
+  clearNotification,
+} from '../reducers/notificationReducer'
 
-const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const BlogForm = ({ toggleForm }) => {
+  const dispatch = useDispatch()
+
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
+
+  let submitDisabled = true
+  if (
+    title.input.value !== '' &&
+    author.input.value !== '' &&
+    url.input.value !== ''
+  ) {
+    submitDisabled = false
+  }
 
   const addBlog = (event) => {
     event.preventDefault()
-    createBlog({
-      title: title,
-      author: author,
-      url: url,
-    })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    const blog = {
+      title: title.input.value,
+      author: author.input.value,
+      url: url.input.value,
+    }
+    toggleForm.current.toggleVisibility()
+    dispatch(createBlog(blog))
+    dispatch(clearNotification())
+    dispatch(
+      setNotification(
+        `a new blog ${blog.title} by ${blog.author} added`,
+        'success',
+        5
+      )
+    )
+    title.reset()
+    author.reset()
+    url.reset()
   }
 
   return (
@@ -23,35 +51,19 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog}>
         <div>
           title:
-          <input
-            id="title"
-            type="text"
-            value={title}
-            name="title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
+          <input {...title.input} />
         </div>
         <div>
           author:
-          <input
-            id="author"
-            type="text"
-            value={author}
-            name="author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+          <input {...author.input} />
         </div>
         <div>
           url:
-          <input
-            id="url"
-            type="text"
-            value={url}
-            name="url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
+          <input {...url.input} />
         </div>
-        <button id="create" type="submit">create</button>
+        <button id="create" type="submit" disabled={submitDisabled}>
+          create
+        </button>
       </form>
     </div>
   )
