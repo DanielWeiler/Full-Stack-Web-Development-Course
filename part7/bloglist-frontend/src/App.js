@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/usersReducer'
 import { logOutUser, setUserFromStorage } from './reducers/logInReducer'
 
 import Blog from './components/Blog'
@@ -9,12 +11,15 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import './index.css'
+import Menu from './components/Menu'
+import Users from './components/Users'
 
 const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   const blogFormRef = useRef()
@@ -27,7 +32,6 @@ const App = () => {
     }
   }, [dispatch])
 
-
   const handleLogout = (event) => {
     event.preventDefault()
     dispatch(logOutUser())
@@ -38,33 +42,39 @@ const App = () => {
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
   return (
-    <div>
-      <h1>Blogs</h1>
-      <Notification />
+    <Router>
+      <div>
+        <Menu />
+        <h1>Blogs</h1>
+        <Notification />
 
-      {user === null ? (
-        <LoginForm />
-      ) : (
-        <div>
-          <p>
-            {user.name} logged in
-            <button onClick={handleLogout}>log out</button>
-          </p>
+        <Switch>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            {user === null ? (
+              <LoginForm />
+            ) : (
+              <div>
+                <p>
+                  {user.name} logged in
+                  <button onClick={handleLogout}>log out</button>
+                </p>
 
-          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm toggleForm={blogFormRef} />
-          </Togglable>
+                <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                  <BlogForm toggleForm={blogFormRef} />
+                </Togglable>
 
-          {blogs.sort(byLikes).map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user.username}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+                {blogs.sort(byLikes).map((blog) => (
+                  <Blog key={blog.id} blog={blog} user={user.username} />
+                ))}
+              </div>
+            )}
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   )
 }
 

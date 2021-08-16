@@ -2,7 +2,6 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 
 const logInReducer = (state = initializeUser(), action) => {
-  console.log('action', action)
   switch(action.type) {
   case 'LOG_IN_FROM_LOCAL_STORAGE':
     return action.data
