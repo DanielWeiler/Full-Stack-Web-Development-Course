@@ -13,6 +13,7 @@ import Togglable from './components/Togglable'
 import './index.css'
 import Menu from './components/Menu'
 import Users from './components/Users'
+import UserBlogs from './components/UserBlogs'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -46,9 +47,17 @@ const App = () => {
       <div>
         <Menu />
         <h1>Blogs</h1>
+        {user !== null ? (
+          <p>
+            {user.name} logged in
+            <button onClick={handleLogout}>log out</button>
+          </p>
+        ) : null}
         <Notification />
-
         <Switch>
+          <Route path="/users/:id">
+            <UserBlogs />
+          </Route>
           <Route path="/users">
             <Users />
           </Route>
@@ -57,11 +66,6 @@ const App = () => {
               <LoginForm />
             ) : (
               <div>
-                <p>
-                  {user.name} logged in
-                  <button onClick={handleLogout}>log out</button>
-                </p>
-
                 <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                   <BlogForm toggleForm={blogFormRef} />
                 </Togglable>
