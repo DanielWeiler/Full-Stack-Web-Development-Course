@@ -81,8 +81,11 @@ blogsRouter.put('/:id', async (request, response) => {
       request.params.id,
       updatedBlogData,
       { new: true }
-    )
-
+    ).populate('user', {
+      username: 1,
+      name: 1,
+    })
+    
     return response.json(blogUpdate.toJSON())
   }
 })

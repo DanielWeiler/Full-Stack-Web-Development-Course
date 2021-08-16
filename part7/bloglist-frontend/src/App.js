@@ -1,15 +1,14 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { logOutUser, setUserFromStorage } from './reducers/logInReducer'
 
+import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import './index.css'
 import Menu from './components/Menu'
 import Users from './components/Users'
@@ -22,8 +21,6 @@ const App = () => {
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
   }, [dispatch])
-
-  const blogFormRef = useRef()
 
   useEffect(() => {
     // Check to see if user details of a logged-in user can already be found on the local storage
@@ -39,8 +36,6 @@ const App = () => {
   }
 
   const user = useSelector((state) => state.user)
-  const blogs = useSelector((state) => state.blogs)
-  const byLikes = (b1, b2) => b2.likes - b1.likes
 
   return (
     <Router>
@@ -55,6 +50,9 @@ const App = () => {
         ) : null}
         <Notification />
         <Switch>
+          <Route path="/blogs/:id">
+            <Blog user={user}/>
+          </Route>
           <Route path="/users/:id">
             <UserBlogs />
           </Route>
@@ -65,15 +63,7 @@ const App = () => {
             {user === null ? (
               <LoginForm />
             ) : (
-              <div>
-                <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-                  <BlogForm toggleForm={blogFormRef} />
-                </Togglable>
-
-                {blogs.sort(byLikes).map((blog) => (
-                  <Blog key={blog.id} blog={blog} user={user.username} />
-                ))}
-              </div>
+              <Blogs />
             )}
           </Route>
         </Switch>
