@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
-import {
-  setNotification,
-} from './reducers/notificationReducer'
+import { logOutUser, setUserFromStorage } from './reducers/logInReducer'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import './index.css'
 
 const App = () => {
@@ -21,47 +17,23 @@ const App = () => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const [user, setUser] = useState(null)
-
   const blogFormRef = useRef()
 
   useEffect(() => {
+    // Check to see if user details of a logged-in user can already be found on the local storage
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(setUserFromStorage(loggedUserJSON))
     }
-  }, [])
+  }, [dispatch])
 
-  const handleLogin = async (event) => {
+
+  const handleLogout = (event) => {
     event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      dispatch(setNotification('wrong username or password', 'error', 5))
-    }
+    dispatch(logOutUser())
   }
 
-  const handleLogout = async (event) => {
-    event.preventDefault()
-    window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
-  }
-
+  const user = useSelector((state) => state.user)
   const blogs = useSelector((state) => state.blogs)
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
@@ -71,13 +43,7 @@ const App = () => {
       <Notification />
 
       {user === null ? (
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
+        <LoginForm />
       ) : (
         <div>
           <p>
