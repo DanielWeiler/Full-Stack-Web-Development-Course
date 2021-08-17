@@ -1,9 +1,19 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { initializeUsers } from '../reducers/usersReducer'
 
 const Users = () => {
+  const dispatch = useDispatch()
+
   const users = useSelector((state) => state.allUsers)
+  const blogs = useSelector((state) => state.blogs)
+
+  // Users must be reinitialized here because, after a blog is created, the number of blogs associated with each user is not updated (so the number of blogs created by the user is not updated on the Users page) because the blogs array property on the user object needs to be populated but this does not happen because the user object is not given a "get" request at the time of the blog "post" request
+  useEffect(() => {
+    dispatch(initializeUsers())
+  }, [blogs])
+
   return (
     <div>
       <h2>Users</h2>
