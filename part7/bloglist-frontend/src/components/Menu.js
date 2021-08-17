@@ -1,14 +1,16 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { logOutUser } from '../reducers/logInReducer'
 
 const Menu = ({ user }) => {
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const handleLogout = (event) => {
     event.preventDefault()
     dispatch(logOutUser())
+    history.push('/')
   }
 
   const padding = {

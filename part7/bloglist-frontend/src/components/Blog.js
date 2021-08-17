@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import CommentForm from './CommentForm'
 
 const Blog = ({ user }) => {
   const dispatch = useDispatch()
@@ -41,6 +42,14 @@ const Blog = ({ user }) => {
       {user.username === blog.user.username ? (
         <button onClick={handleDelete}>remove</button>
       ) : null}
+      <h3>comments</h3>
+      <CommentForm blog={blog} />
+      <ul>
+        {blog.comments.map((comment, index) => (
+          /* whatever is in that second position after the comma is the index of the item in the array */
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
     </div>
   )
 }

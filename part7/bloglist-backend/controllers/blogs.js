@@ -22,6 +22,7 @@ blogsRouter.post('/', async (request, response) => {
     likes: body.likes ? body.likes : 0,
     // If likes is defined, then it is likes; if likes is not defined then it is 0.
     user: user._id,
+    comments: body.comments
   })
 
   const savedBlog = await blog.save()
@@ -75,6 +76,7 @@ blogsRouter.put('/:id', async (request, response) => {
       author: body.author || blog.author,
       url: body.url || blog.url,
       likes: body.likes || blog.likes,
+      comments: body.comments || blog.comments
     }
 
     const blogUpdate = await Blog.findByIdAndUpdate(
@@ -85,7 +87,6 @@ blogsRouter.put('/:id', async (request, response) => {
       username: 1,
       name: 1,
     })
-    
     return response.json(blogUpdate.toJSON())
   }
 })
