@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import { logOutUser, setUserFromStorage } from './reducers/logInReducer'
+import { setUserFromStorage } from './reducers/logInReducer'
 
 import Blogs from './components/Blogs'
 import Blog from './components/Blog'
@@ -30,28 +30,17 @@ const App = () => {
     }
   }, [dispatch])
 
-  const handleLogout = (event) => {
-    event.preventDefault()
-    dispatch(logOutUser())
-  }
-
   const user = useSelector((state) => state.user)
 
   return (
     <Router>
       <div>
-        <Menu />
+        <Menu user={user} />
         <h1>Blogs</h1>
-        {user !== null ? (
-          <p>
-            {user.name} logged in
-            <button onClick={handleLogout}>log out</button>
-          </p>
-        ) : null}
         <Notification />
         <Switch>
           <Route path="/blogs/:id">
-            <Blog user={user}/>
+            <Blog user={user} />
           </Route>
           <Route path="/users/:id">
             <UserBlogs />
@@ -59,13 +48,7 @@ const App = () => {
           <Route path="/users">
             <Users />
           </Route>
-          <Route path="/">
-            {user === null ? (
-              <LoginForm />
-            ) : (
-              <Blogs />
-            )}
-          </Route>
+          <Route path="/">{user === null ? <LoginForm /> : <Blogs />}</Route>
         </Switch>
       </div>
     </Router>
