@@ -53,10 +53,11 @@ export const likeBlog = (blog) => {
 }
 
 export const addComment = (blog, content) => {
-  // "push" returns the length of the array. You don't need to save the pushed array to a new variable.
-  blog.comments.push(content)
   return async (dispatch) => {
-    const blogWithComment = await blogService.update(blog.id, blog)
+    // Use concat instead of push to add a comment so that a new array and a new object are created (instead of pushing to the original array) to make sure state is not mutated directly
+    const newComment = blog.comments.concat(content)
+    const updatedBlog = { ...blog, comments: newComment }
+    const blogWithComment = await blogService.update(blog.id, updatedBlog)
     dispatch({
       type: 'NEW_COMMENT',
       data: blogWithComment,
