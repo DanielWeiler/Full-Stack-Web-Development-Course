@@ -9,7 +9,6 @@ import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-import './index.css'
 import Menu from './components/Menu'
 import Users from './components/Users'
 import UserBlogs from './components/UserBlogs'
@@ -34,7 +33,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="container">
         <Menu user={user} />
         <h1>Blogs</h1>
         <Notification />

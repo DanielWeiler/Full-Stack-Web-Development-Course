@@ -12,7 +12,8 @@ const notificationReducer = (state = '', action) => {
 let notificationTimeout
 
 export const setNotification = (content, style, time) => {
-  let color = ''
+  // Below is the older way I selected the notification color before using Alert with react bootstrap
+/*   let color = ''
   if (style === 'success') {
     color = 'green'
   }
@@ -28,7 +29,7 @@ export const setNotification = (content, style, time) => {
     borderRadius: '5px',
     padding: '10px',
     marginBottom: '10px'
-  }
+  } */
 
   return async (dispatch) => {
 

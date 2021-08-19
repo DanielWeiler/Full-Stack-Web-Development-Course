@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 import CommentForm from './CommentForm'
 
@@ -23,6 +24,7 @@ const Blog = ({ user }) => {
   const blog = useSelector((state) => state.blogs).find((blog) =>
     blog.id === id ? blog : null
   )
+
   if (!blog) {
     return null
   }
@@ -36,13 +38,15 @@ const Blog = ({ user }) => {
       </p>
       <p>
         {blog.likes} likes
-        <button onClick={handleLike}>like</button>
+        <Button onClick={handleLike} style={{ marginLeft: 10 }}>
+          like
+        </Button>
       </p>
-      <p>added by {blog.user.username}</p>
+      <p>Added by {blog.user.username}</p>
       {user.username === blog.user.username ? (
-        <button onClick={handleDelete}>remove</button>
+        <Button onClick={handleDelete} style={{ marginBottom: 10 }}>remove</Button>
       ) : null}
-      <h3>comments</h3>
+      <h3>Comments</h3>
       <CommentForm blog={blog} />
       <ul>
         {blog.comments.map((comment, index) => (

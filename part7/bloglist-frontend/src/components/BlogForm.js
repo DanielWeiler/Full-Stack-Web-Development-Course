@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import { Form, Button } from 'react-bootstrap'
 import { useField } from '../hooks'
 import { createBlog } from '../reducers/blogReducer'
 import {
@@ -35,7 +36,7 @@ const BlogForm = ({ toggleForm }) => {
     dispatch(clearNotification())
     dispatch(
       setNotification(
-        `a new blog ${blog.title} by ${blog.author} added`,
+        `A new blog "${blog.title}" by "${blog.author}" added`,
         'success',
         5
       )
@@ -45,26 +46,30 @@ const BlogForm = ({ toggleForm }) => {
     url.reset()
   }
 
+  const margin = {
+    marginTop: 10,
+    marginBottom: 10,
+  }
+
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          title:
-          <input {...title.input} />
-        </div>
-        <div>
-          author:
-          <input {...author.input} />
-        </div>
-        <div>
-          url:
-          <input {...url.input} />
-        </div>
-        <button id="create" type="submit" disabled={submitDisabled}>
-          create
-        </button>
-      </form>
+      <h2>Create new blog</h2>
+      <Form onSubmit={addBlog}>
+        <Form.Label>Title:</Form.Label>
+        <Form.Control {...title.input} />
+        <Form.Label>Author:</Form.Label>
+        <Form.Control {...author.input} />
+        <Form.Label>URL:</Form.Label>
+        <Form.Control {...url.input} />
+        <Button
+          id="create"
+          type="submit"
+          disabled={submitDisabled}
+          style={margin}
+        >
+          Create
+        </Button>
+      </Form>
     </div>
   )
 }

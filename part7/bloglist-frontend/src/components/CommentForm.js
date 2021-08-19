@@ -1,6 +1,7 @@
 import React from 'react'
-import { useField } from '../hooks/index'
 import { useDispatch } from 'react-redux'
+import { Form, Row, Col, Button } from 'react-bootstrap'
+import { useField } from '../hooks/index'
 import { addComment } from '../reducers/blogReducer'
 
 const CommentForm = ({ blog }) => {
@@ -13,11 +14,24 @@ const CommentForm = ({ blog }) => {
     dispatch(addComment(blog, content))
     comment.reset()
   }
+
   return (
-    <form onSubmit={handleComment}>
-      <input {...comment.input} />
-      <button type="submit">add comment</button>
-    </form>
+    <div /* style={{ width: '50%', display: 'flex', flexDirection: 'row' }} */>
+      <Form onSubmit={handleComment}>
+        <Row>
+          <Col>
+            <Form.Control
+              placeholder="Add a comment here"
+              style={{ marginBottom: 15 }}
+              {...comment.input}
+            />
+          </Col>
+          <Col>
+            <Button type="submit">Add</Button>
+          </Col>
+        </Row>
+      </Form>
+    </div>
   )
 }
 

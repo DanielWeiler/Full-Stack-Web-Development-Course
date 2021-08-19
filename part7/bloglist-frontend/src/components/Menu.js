@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import { logOutUser } from '../reducers/logInReducer'
+import { Navbar, Nav, Button } from 'react-bootstrap'
 
 const Menu = ({ user }) => {
   const dispatch = useDispatch()
@@ -18,20 +19,31 @@ const Menu = ({ user }) => {
   }
 
   return (
-    <div style={{ display:'flex', flexDirection:'row' }}>
-      <Link style={padding} to="/">
-        blogs
-      </Link>
-      <Link style={padding} to="/users">
-        users
-      </Link>
-      {user !== null ? (
-        <div>
-          {user.name} logged in
-          <button onClick={handleLogout}>log out</button>
-        </div>
-      ) : null}
-    </div>
+    <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="mr-auto">
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/">
+              blogs
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/users">
+              users
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            {user ? (
+              <div>
+                <em style={padding}>{user.name} logged in</em>
+                <Button onClick={handleLogout}>log out</Button>
+              </div>
+            ) : null }
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   )
 }
 

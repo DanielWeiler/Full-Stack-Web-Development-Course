@@ -1,5 +1,6 @@
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import { setNotification } from './notificationReducer'
 
 const logInReducer = (state = initializeUser(), action) => {
   switch(action.type) {
@@ -29,16 +30,22 @@ export const setUserFromStorage = (loggedUserJSON) => {
 
 export const setUser = (credentials) => {
   return async dispatch => {
-    const user = await loginService.login(credentials)
-    // Stores the user details to the local storage
-    window.localStorage.setItem(
-      'loggedBlogappUser', JSON.stringify(user)
-    )
-    blogService.setToken(user.token)
-    dispatch({
-      type: 'LOG_IN',
-      data: user
-    })
+    try {
+      const user = await loginService.login(credentials)
+      // Stores the user details to the local storage
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
+      dispatch(setNotification(`Welcome ${credentials.username}`, 'success', 5))
+      dispatch({
+        type: 'LOG_IN',
+        data: user
+      })
+    } catch (error) {
+      dispatch(setNotification('wrong username or password', 'warning', 5))
+    }
+
   }
 }
 
