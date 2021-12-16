@@ -1,7 +1,7 @@
 # Bloglist #
 
 
-# How to start a project without React: #
+# How to start a project in backend: #
 
 ## Initialize project ##
 
