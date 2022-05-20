@@ -44,7 +44,7 @@ const LoginForm = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
-          <Button variant="primary" type="submit" style={margin}>
+          <Button id="login-button" variant="primary" type="submit" style={margin}>
             Login
           </Button>
         </Form.Group>

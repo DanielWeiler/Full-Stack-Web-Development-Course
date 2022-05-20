@@ -56,11 +56,11 @@ const BlogForm = ({ toggleForm }) => {
       <h2>Create new blog</h2>
       <Form onSubmit={addBlog}>
         <Form.Label>Title:</Form.Label>
-        <Form.Control {...title.input} />
+        <Form.Control id='title' {...title.input} />
         <Form.Label>Author:</Form.Label>
-        <Form.Control {...author.input} />
+        <Form.Control id='author' {...author.input} />
         <Form.Label>URL:</Form.Label>
-        <Form.Control {...url.input} />
+        <Form.Control id='url' {...url.input} />
         <Button
           id="create"
           type="submit"
